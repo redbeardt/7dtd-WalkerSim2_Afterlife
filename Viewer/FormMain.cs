@@ -38,6 +38,15 @@ namespace WalkerSim.Viewer
         void GenerateColorTable()
         {
             var groupCount = simulation.Agents.Count / CurrentConfig.GroupSize;
+
+            if(simulation is null){
+                throw new Exception("sim is null");
+            }
+
+            if(simulation.Agents is null){
+                throw new Exception("agents is null");
+            }
+
             GroupColors = new Brush[groupCount];
 
             for (int i = 0; i < groupCount; i++)

@@ -15,3 +15,15 @@
 /Binaries/LogLibrary.dll
 /Mod/obj
 /Viewer/obj
+
+.idea
+obj
+bin
+packages
+/Binaries/*.dll
+/Tests/MSTest.*
+/Tests/Microsoft.*
+/Tests/System.*
+/Mod/MSTest.*
+/Mod/Microsoft.*
+/Mod/System.*

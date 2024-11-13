@@ -240,8 +240,8 @@ namespace WalkerSim
         public static MapData LoadFromFolder(string folderPath)
         {
             // Parse map_info.xml         
-            var mapInfoPath = System.IO.Path.Combine(folderPath, "map_info.xml");
-            var mapInfo = LoadMapInfo(mapInfoPath);
+            string mapInfoPath = System.IO.Path.Combine(folderPath, "map_info.xml");
+            MapInfo mapInfo = LoadMapInfo(mapInfoPath);
 
             var roads = LoadRoadSplat(folderPath);
             if (roads == null)

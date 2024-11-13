@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 
 namespace WalkerSim
 {
@@ -210,7 +211,7 @@ namespace WalkerSim
         {
             if (entity == null)
             {
-                Logging.Debug("Entity not found: {0}", entityId);
+                // Logging.Debug("Entity not found: {0}", entityId);
                 return true;
             }
 
@@ -226,18 +227,12 @@ namespace WalkerSim
         static void UpdateActiveAgents()
         {
             var world = GameManager.Instance.World;
-
             var simulation = Simulation.Instance;
+            List<int> agentsToForceDespawn = [];
 
             foreach (var kv in simulation.Active)
             {
                 var agent = kv.Value;
-                if (agent.EntityId == -1)
-                {
-                    Logging.Debug("Agent has no entity id, skipping.");
-                    continue;
-                }
-
                 var entity = world.GetEntity(agent.EntityId);
                 if (IsEntityDead(entity, agent.EntityId))
                 {
@@ -251,6 +246,11 @@ namespace WalkerSim
                     agent.Position = VectorUtils.ToSim(newPos);
                     agent.Position.Validate();
                 }
+            }
+
+            foreach(var key in agentsToForceDespawn){
+                Agent agent = simulation.Active[key];
+                simulation.ForceDespawn(key, agent);
             }
         }
 

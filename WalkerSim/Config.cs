@@ -86,6 +86,18 @@ namespace WalkerSim
             public List<MovementProcessor> Entries = new List<MovementProcessor>();
         }
 
+        public class Biome
+        {
+            [XmlAttribute("Name")]
+            public string Name;
+
+            [XmlAttribute("PopulationDensity")]
+            public int PopulationDensity;
+
+            [XmlAttribute("FallbackSpawnGroup")]
+            public string FallbackSpawnGroup;
+        }
+
         public class DebugOptions
         {
             [XmlElement("LogSpawnDespawn")]
@@ -113,22 +125,41 @@ namespace WalkerSim
         [XmlElement("AgentRespawnPosition")]
         public WorldLocation RespawnPosition = WorldLocation.None;
 
+        [XmlElement("FallbackSpawnGroup")]
+        public string FallbackSpawnGroup = "ZombiesAll";
+
         [XmlElement("PauseDuringBloodmoon")]
         public bool PauseDuringBloodmoon = false;
 
         [XmlElement("MovementProcessors")]
         public List<MovementProcessors> Processors;
 
+        [XmlElement("Biome")]
+        public List<Biome> Biomes;
+
         private static void SanitizeConfig(Config config)
         {
-            if (config.PopulationDensity < Simulation.Limits.MinDensity ||
-                config.PopulationDensity > Simulation.Limits.MaxDensity)
+            if (config.PopulationDensity is < Simulation.Limits.MinDensity
+                    or > Simulation.Limits.MaxDensity)
             {
                 Logging.Warn("Invalid value for PopulationDensity (Min: {0}, Max: {1}), clamping.",
                     Simulation.Limits.MinDensity,
                     Simulation.Limits.MaxDensity);
 
                 config.PopulationDensity = Math.Clamp(config.PopulationDensity,
+                    Simulation.Limits.MinDensity,
+                    Simulation.Limits.MaxDensity);
+            }
+
+            foreach(var biome in config.Biomes){
+                if(biome.PopulationDensity is >= Simulation.Limits.MinDensity
+                        and <= Simulation.Limits.MaxDensity){
+                    continue;
+                }
+
+                Logging.Warn($"Invalid Density value '{biome.PopulationDensity}' in BiomePopulationDensity with Biome '{biome.Name}', clamping.");
+
+                biome.PopulationDensity = Math.Clamp(biome.PopulationDensity,
                     Simulation.Limits.MinDensity,
                     Simulation.Limits.MaxDensity);
             }

@@ -77,8 +77,7 @@ namespace WalkerSim
                 return;
             }
 
-            Agent agent;
-            if (!_pendingSpawns.TryDequeue(out agent))
+            if (!_pendingSpawns.TryDequeue(out Agent agent))
             {
                 return;
             }
@@ -128,6 +127,15 @@ namespace WalkerSim
             }
 
             _allowAgentSpawn = allowSpawn;
+        }
+
+        public void ForceDespawn(int agentId, Agent agent)
+        {
+            _agentDespawnHandler(this, agent);
+            agent.CurrentState = Agent.State.Wandering;
+            _state.Active.Remove(agentId);
+            _state.TotalDespawns++;
+            Logging.Debug($"Forcibly despawned agent {agentId}.");
         }
     }
 }
